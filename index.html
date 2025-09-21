@@ -5,12 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <script src="javascript.js" defer></script>
-    <title>Document</title>
+    <title>Tic-Tac-Toe</title>
 </head>
 <body>
     <h1>Tic-Tac-Toe</h1>
     <div id="game-board" class="game-board"></div>
     <p id="message"></p>
-    <button id="restart-button">Restart Game</button>
+    <div class="controls">
+        <button id="restart-button">Restart Game</button>
+        <button id="set-name-button">Set Names</button>
+    </div>
+
+    <!-- The dialog box for input -->
+    <dialog id="name-dialog">
+        <h2>Enter Player Names</h2>
+        <form method="dialog" id="name-form">
+            <p>
+                <label for="player-1-name">Player 1 Name:</label>
+                <input type="text" id="player-1-name" placeholder="Player 1">
+            </p>
+            <p>
+                <label for="player-2-name">Player 2 Name:</label>
+                <input type="text" id="player-2-name" placeholder="Player 2">
+            </p>
+            <div class="form-buttons">
+                <button value="cancel">Cancel</button>
+                <button id="submit-names" value="default">Save</button>
+            </div>
+        </form>
+    </dialog>
 </body>
 </html>
