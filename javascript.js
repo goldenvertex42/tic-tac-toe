@@ -27,10 +27,13 @@ const gameController = (() => {
     const player1 = player("Player 1", "X");
     const player2 = player("Player 2", "O");
     let currentPlayer = player1;
+    let gameIsOver = false;
 
     const switchPlayer = () => {
         currentPlayer = currentPlayer === player1 ? player2 : player1;
     };
+
+    const getCurrentPlayer = () => currentPlayer;
 
     const checkWin = () => {
         const board = gameBoard.getBoard();
@@ -59,14 +62,17 @@ const gameController = (() => {
     };
 
     const handlePlayerMove = (index) => {
+        if (gameIsOver) {
+            return;
+        }
         if (gameBoard.updateBoard(index, currentPlayer.marker)) {
             displayController.render();
             if (checkWin(gameBoard.getBoard())) {
                 displayController.setMessageHandler(`${currentPlayer.name} wins!`);
-                displayController.addSquareClickHandler(() => {}); // Disable clicks
+                gameIsOver = true; // Disable clicks
             } else if (checkDraw(gameBoard.getBoard())) {
                 displayController.setMessageHandler("It's a tie!");
-                displayController.addSquareClickHandler(() => {}); // Disable clicks
+                gameIsOver = true;
             } else {
                 switchPlayer();
                 displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
@@ -78,6 +84,7 @@ const gameController = (() => {
         gameBoard.resetBoard();
         displayController.render();
         currentPlayer = player1;
+        gameIsOver = false;
         displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
         // Re-add the click handler to the board
         displayController.addSquareClickHandler(handlePlayerMove);
@@ -116,7 +123,7 @@ const displayController = (() => {
     const setMessageHandler = (message) => {
         messageElement.textContent = message;
     };
-
+    
     const addSquareClickHandler = (handler) => {
         boardElement.addEventListener("click", (event) => {
             if (event.target.classList.contains("square")) {
