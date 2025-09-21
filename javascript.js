@@ -21,16 +21,16 @@ const gameBoard = (() => {
 
 // GameController Module
 const gameController = (() => {
-    const player = (name, marker) => {
-        return ({name, marker});
-    };
-    const player1 = player("Player 1", "X");
-    const player2 = player("Player 2", "O");
-    let currentPlayer = player1;
+    const players = [
+        { name: "Player 1", marker: "X"},
+        { name: "Player 2", marker: "O"}
+    ]
+    
+    let currentPlayer = players[0];
     let gameIsOver = false;
 
     const switchPlayer = () => {
-        currentPlayer = currentPlayer === player1 ? player2 : player1;
+        currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
     };
 
     const getCurrentPlayer = () => currentPlayer;
@@ -69,7 +69,7 @@ const gameController = (() => {
             displayController.render();
             if (checkWin(gameBoard.getBoard())) {
                 displayController.setMessageHandler(`${currentPlayer.name} wins!`);
-                gameIsOver = true; // Disable clicks
+                gameIsOver = true; 
             } else if (checkDraw(gameBoard.getBoard())) {
                 displayController.setMessageHandler("It's a tie!");
                 gameIsOver = true;
@@ -80,10 +80,16 @@ const gameController = (() => {
         }
     };
 
+    const setNames = (player1name, player2name) => {
+        players[0].name = player1name || "Player 1";
+        players[1].name = player2name || "Player 2";
+        displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
+    }
+
     const restartGame = () => {
         gameBoard.resetBoard();
         displayController.render();
-        currentPlayer = player1;
+        currentPlayer = players[0];
         gameIsOver = false;
         displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
         // Re-add the click handler to the board
@@ -94,6 +100,8 @@ const gameController = (() => {
         displayController.render();
         displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
         displayController.addSquareClickHandler(handlePlayerMove);
+        displayController.addSetNameHandler(displayController.showDialog);
+        displayController.handleNameSubmission(setNames)
         displayController.addRestartHandler(restartGame);
     };
 
@@ -107,6 +115,7 @@ const displayController = (() => {
     const boardElement = document.getElementById("game-board");
     const messageElement = document.getElementById("message");
     const restartButton = document.getElementById("restart-button");
+    const setNamesButton = document.getElementById("set-name-button");
 
     const render = () => {
         boardElement.innerHTML = "";
@@ -137,7 +146,31 @@ const displayController = (() => {
         restartButton.addEventListener("click", handler);
     };
 
-    return { render, setMessageHandler, addSquareClickHandler, addRestartHandler };
+    const addSetNameHandler = (showDialogHandler) => {
+        setNamesButton.addEventListener("click", showDialogHandler)
+    }
+
+    const handleNameSubmission = (submitHandler) => {
+        const dialog = document.getElementById("name-dialog");
+        const submitButton = document.getElementById("submit-names");
+        submitButton.addEventListener("click", (e) => {
+            const player1name = document.getElementById("player-1-name").value;
+            const player2name = document.getElementById("player-2-name").value;
+            submitHandler(player1name, player2name);
+            dialog.close();
+        });
+        
+        dialog.addEventListener("close", () => {
+            // Can handle any cleanup if needed
+        });
+    };
+
+    const showDialog = () => {
+        document.getElementById("name-dialog").showModal();
+    };
+
+
+    return { render, setMessageHandler, addSquareClickHandler, addRestartHandler, addSetNameHandler, handleNameSubmission, showDialog };
 })();
 
 gameController.init();
