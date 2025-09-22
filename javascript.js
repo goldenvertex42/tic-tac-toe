@@ -28,12 +28,11 @@ const gameController = (() => {
     
     let currentPlayer = players[0];
     let gameIsOver = false;
+    let gameIsTied = false;
 
     const switchPlayer = () => {
         currentPlayer = currentPlayer === players[0] ? players[1] : players[0];
     };
-
-    const getCurrentPlayer = () => currentPlayer;
 
     const checkWin = () => {
         const board = gameBoard.getBoard();
@@ -68,11 +67,14 @@ const gameController = (() => {
         if (gameBoard.updateBoard(index, currentPlayer.marker)) {
             displayController.render();
             if (checkWin(gameBoard.getBoard())) {
-                displayController.setMessageHandler(`${currentPlayer.name} wins!`);
+                displayController.setTitleHandler(`${currentPlayer.name} wins!`)
+                displayController.setMessageHandler(`Thanks for playing! Click the restart button to play again!`);
                 gameIsOver = true; 
             } else if (checkDraw(gameBoard.getBoard())) {
-                displayController.setMessageHandler("It's a tie!");
+                displayController.setTitleHandler(`It's a tie!`)
+                displayController.setMessageHandler(`Thanks for playing! Click the restart button to play again!`);
                 gameIsOver = true;
+                gameIsTied = true;
             } else {
                 switchPlayer();
                 displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
@@ -83,8 +85,11 @@ const gameController = (() => {
     const setNames = (player1name, player2name) => {
         players[0].name = player1name || "Player 1";
         players[1].name = player2name || "Player 2";
-        displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
-    }
+        if (gameIsOver && !gameIsTied) {
+            displayController.setTitleHandler(`${currentPlayer.name} wins!`);
+        } else {displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
+        };
+    };
 
     const restartGame = () => {
         gameBoard.resetBoard();
@@ -92,6 +97,7 @@ const gameController = (() => {
         currentPlayer = players[0];
         gameIsOver = false;
         displayController.setMessageHandler(`${currentPlayer.name}'s turn`);
+        displayController.setTitleHandler(`Tic-Tac-Toe`);
         // Re-add the click handler to the board
         displayController.addSquareClickHandler(handlePlayerMove);
     };
@@ -116,6 +122,7 @@ const displayController = (() => {
     const messageElement = document.getElementById("message");
     const restartButton = document.getElementById("restart-button");
     const setNamesButton = document.getElementById("set-name-button");
+    const titleElements = document.getElementsByTagName("h1");
 
     const render = () => {
         boardElement.innerHTML = "";
@@ -133,6 +140,10 @@ const displayController = (() => {
         messageElement.textContent = message;
     };
     
+    const setTitleHandler = (message) => {
+        titleElements[0].textContent = message;
+    }
+
     const addSquareClickHandler = (handler) => {
         boardElement.addEventListener("click", (event) => {
             if (event.target.classList.contains("square")) {
@@ -170,7 +181,7 @@ const displayController = (() => {
     };
 
 
-    return { render, setMessageHandler, addSquareClickHandler, addRestartHandler, addSetNameHandler, handleNameSubmission, showDialog };
+    return { render, setMessageHandler, setTitleHandler, addSquareClickHandler, addRestartHandler, addSetNameHandler, handleNameSubmission, showDialog };
 })();
 
 gameController.init();
