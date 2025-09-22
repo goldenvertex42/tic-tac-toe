@@ -1,21 +1,40 @@
 .game-board {
     display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
+    grid-template-columns: repeat(3, 10rem);
+    grid-template-rows: repeat(3, 10rem);
     gap: 5px;
     margin: 20px auto;
     width: fit-content;
     border: 3px solid #333;
 }
 
+h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .square {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3rem;
+    font-size: 5rem;
     font-weight: bold;
     cursor: pointer;
     background-color: #f0f0f0;
+}
+
+#message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 dialog {
